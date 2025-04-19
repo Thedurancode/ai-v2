@@ -6,5 +6,9 @@ requests==2.31.0
 flask-cors==3.0.10
 linkedin-api==2.0.2
 gunicorn==21.2.0
-supabase-py>=2.0.0
+supabase>=0.7.1
+gotrue>=0.5.0
+postgrest>=0.10.6
+realtime>=0.1.0
+storage3>=0.5.2
 reportlab==4.3.1

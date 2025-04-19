@@ -1,4 +1,4 @@
-run = "bash run.sh"
+run = "bash -c 'bash run.sh || bash run_minimal.sh'"
 language = "python3"
 modules = ["python-3.10"]
 
