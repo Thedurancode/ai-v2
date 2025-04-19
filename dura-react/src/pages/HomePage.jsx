@@ -12,6 +12,7 @@ import HistoryModal from '../components/HistoryModal';
 import Footer from '../components/Footer';
 import ErrorBoundary from '../components/ErrorBoundary'; // Import ErrorBoundary
 import ResultsSkeleton from '../components/SkeletonLoader'; // Import Skeleton Loader
+import replitApi from '../services/replit-api'; // Import Replit-specific API
 
 const AnimatedBackground = styled(motion.div)`
   position: fixed;
@@ -193,9 +194,40 @@ const HomePage = ({ isHistoryModalOpen, setIsHistoryModalOpen }) => {
 
     const checkSearchStatus = async () => {
       try {
-        console.log('Checking search status...');
+        console.log('Checking search status using Replit API...');
+
+        // Try using our Replit-specific API service first
+        try {
+          const status = await replitApi.checkSearchStatus();
+          console.log('Search status response from Replit API:', status);
+
+          setSearchStatus(status);
+
+          // If search is complete and has results, update search results
+          if (status.completed && status.results) {
+            // Format the results correctly based on where they came from
+            const formattedResults = status.results;
+            console.log('Search complete, results:', formattedResults);
+            setSearchResults(formattedResults);
+            // Refresh history when search completes
+            fetchHistory();
+          }
+
+          if (status.completed || status.current_step === 'error') {
+            clearInterval(statusInterval);
+            setIsSearching(false);
+          }
+
+          return; // Exit early if successful
+        } catch (replitError) {
+          console.warn('Replit API status check failed, falling back to direct axios:', replitError);
+          // Continue to the fallback method
+        }
+
+        // Fallback to direct axios call
+        console.log('Falling back to direct axios call to /search-status');
         const response = await axios.get('/search-status');
-        console.log('Search status response:', response.data);
+        console.log('Search status response from direct axios:', response.data);
         const status = response.data;
 
         setSearchStatus(status);
@@ -261,12 +293,29 @@ const HomePage = ({ isHistoryModalOpen, setIsHistoryModalOpen }) => {
       // Get the OpenAI API key from environment variables
       const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-      console.log('Sending search request to:', '/search');
+      console.log('Using Replit API service for search');
+
+      // Try using our Replit-specific API service first
+      try {
+        const data = await replitApi.searchCompanies(query.trim(), {
+          api_key: openaiApiKey // Pass the API key to the backend
+        });
+        console.log('Search response from Replit API:', data);
+        setSearchResults(data);
+        setIsSearching(false);
+        return; // Exit early if successful
+      } catch (replitError) {
+        console.warn('Replit API search failed, falling back to direct axios:', replitError);
+        // Continue to the fallback method
+      }
+
+      // Fallback to direct axios call
+      console.log('Falling back to direct axios call to /search');
       const response = await axios.post('/search', {
         query: query.trim(),
         api_key: openaiApiKey // Pass the API key to the backend
       });
-      console.log('Search response:', response.data);
+      console.log('Search response from direct axios:', response.data);
       setSearchResults(response.data);
       setIsSearching(false);
     } catch (error) {
@@ -311,13 +360,29 @@ const HomePage = ({ isHistoryModalOpen, setIsHistoryModalOpen }) => {
       // Get the OpenAI API key from environment variables
       const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-      console.log('Sending AI search request to:', '/ai-search');
+      console.log('Using Replit API service for AI search');
+
+      // Try using our Replit-specific API service first
+      try {
+        await replitApi.aiSearch({
+          api_key: openaiApiKey // Pass the API key to the backend
+        });
+        console.log('AI search initiated via Replit API, waiting for results via polling');
+        // The actual results will be received via the polling mechanism
+        return; // Exit early if successful
+      } catch (replitError) {
+        console.warn('Replit API AI search failed, falling back to direct axios:', replitError);
+        // Continue to the fallback method
+      }
+
+      // Fallback to direct axios call
+      console.log('Falling back to direct axios call to /ai-search');
       await axios.get('/ai-search', {
         params: {
           api_key: openaiApiKey // Pass the API key to the backend
         }
       });
-      console.log('AI search initiated, waiting for results via polling');
+      console.log('AI search initiated via direct axios, waiting for results via polling');
       // The actual results will be received via the polling mechanism
     } catch (error) {
       console.error('AI search error:', error);
@@ -352,11 +417,16 @@ const HomePage = ({ isHistoryModalOpen, setIsHistoryModalOpen }) => {
 
     // Try to get additional details if needed
     try {
+      console.log('Getting company details for:', company.name);
+
+      // Try using our Replit-specific API service first (if we add this method later)
+      // For now, just use the direct axios call
       const response = await axios.post('/company-details', {
         name: company.name
       });
 
       if (response.data && response.data.company) {
+        console.log('Got additional company details:', response.data.company);
         setSelectedCompany({
           ...company,
           ...response.data.company
