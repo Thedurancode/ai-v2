@@ -1,0 +1,144 @@
+import PDFDocument from 'pdfkit'
+import blobStream from 'blob-stream'
+
+export const generateCompanyPDF = async (company, researchContent) => {
+  return new Promise((resolve) => {
+    // Create a document
+    const doc = new PDFDocument({
+      size: 'A4',
+      margin: 50,
+      layout: 'portrait',
+      info: {
+        Title: `${company.name} Research Report`,
+        Author: 'Dura Research Platform',
+        Subject: 'Company Research Report',
+      }
+    })
+
+    // Create a stream to collect the PDF data
+    const stream = doc.pipe(blobStream())
+
+    // Modern header with gradient
+    doc
+      .rect(0, 0, doc.page.width, 120)
+      .fillLinearGradient(
+        0, 0, doc.page.width, 120,
+        '#4f46e5', '#7e22ce'
+      )
+      .fill()
+
+    // Company name in header
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(24)
+      .fillColor('white')
+      .text(company.name, 50, 40, {
+        align: 'left'
+      })
+
+    // Report title
+    doc
+      .fontSize(14)
+      .text('Research Report', 50, 70, {
+        align: 'left'
+      })
+
+    // Date
+    doc
+      .fontSize(10)
+      .text(new Date().toLocaleDateString(), doc.page.width - 50, 70, {
+        align: 'right'
+      })
+
+    // Add logo placeholder
+    doc
+      .rect(doc.page.width - 100, 30, 60, 60)
+      .fillColor('#ffffff20')
+      .fill()
+      .strokeColor('#ffffff80')
+      .stroke()
+
+    // Main content
+    doc.moveDown(3)
+
+    // Company overview section
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(16)
+      .fillColor('#4f46e5')
+      .text('Company Overview', {
+        underline: true
+      })
+      .moveDown(0.5)
+
+    doc
+      .font('Helvetica')
+      .fontSize(12)
+      .fillColor('#333')
+      .text(company.description || 'No description available.', {
+        align: 'justify',
+        lineGap: 5
+      })
+      .moveDown()
+
+    // Score section
+    doc
+      .font('Helvetica-Bold')
+      .fillColor('#4f46e5')
+      .text(`Partnership Score: ${company.partnership_score}/10`, {
+        underline: true
+      })
+      .moveDown(0.5)
+
+    // Score visualization
+    const scoreWidth = 300 * (company.partnership_score / 10)
+    doc
+      .rect(50, doc.y, scoreWidth, 20)
+      .fillLinearGradient(
+        50, doc.y, 50 + scoreWidth, doc.y + 20,
+        '#4f46e5', '#7e22ce'
+      )
+      .fill()
+
+    doc
+      .font('Helvetica')
+      .fontSize(10)
+      .fillColor('#333')
+      .text(`${getScoreCategory(company.partnership_score)} potential`, 50 + scoreWidth + 10, doc.y - 15)
+      .moveDown(2)
+
+    // Research content sections
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(16)
+      .fillColor('#4f46e5')
+      .text('Research Findings', {
+        underline: true
+      })
+      .moveDown(0.5)
+
+    // Process research content sections
+    researchContent?.sections?.forEach(section => {
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(14)
+        .fillColor('#4f46e5')
+        .text(section.heading)
+        .moveDown(0.3)
+
+      doc
+        .font('Helvetica')
+        .fontSize(12)
+        .fillColor('#333')
+        .text(section.content, {
+          align: 'justify',
+          lineGap: 5,
+          paragraphGap: 10
+        })
+        .moveDown()
+    })
+
+    // Footer
+    doc
+      .fontSize(10)
+      .fillColor('#666')

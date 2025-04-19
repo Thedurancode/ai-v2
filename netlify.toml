@@ -1,0 +1,17 @@
+  [build]
+  command = "pip install -r requirements.txt"
+  functions = "netlify/functions"
+  publish = "dura-react/dist"
+  exclude = ["venv/**", "**/venv/**", "**/*venv*/**"]
+
+[functions]
+  external_node_modules = []
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[dev]
+  port = 5018

@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: dura-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: FLASK_APP
+        value: app.py
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: 0
+      - key: PORT
+        value: 10000
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: DB_PATH
+        value: dura_history.db
+      - key: EXA_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PERPLEXITY_API_KEY
+        sync: false
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: CORESIGNAL_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false 

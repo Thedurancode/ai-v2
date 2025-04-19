@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLSE Partner Research | AI-Powered Partnership Intelligence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Emergency fix for text visibility */
+        body {
+            color: #FFFFFF !important;
+        }
+        h1, h2, h3, h4, h5, h6, p, span, div, button, input, a {
+            color: #FFFFFF !important;
+        }
+        .accent {
+            color: #C8102E !important; /* MLSE Red */
+        }
+        .tab-button.active {
+            color: #C8102E !important;
+            border-bottom: 2px solid #C8102E !important;
+        }
+        .search-box input {
+            color: #FFFFFF !important;
+        }
+        .company-name, .company-description, .score-label, .score-value {
+            color: #FFFFFF !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon"><i class="fas fa-handshake"></i></span>
+                <h1>MLSE<span class="accent">Research</span></h1>
+            </div>
+            <p class="tagline">Partnership Intelligence Assistant</p>
+        </header>
+
+        <main>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search for an industry (e.g., software, retail, healthcare)">
+                    <button id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button id="ai-search-button" class="ai-button" title="AI-powered search">
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </div>
+                <p class="search-tip">Enter an industry to find potential partners that don't compete with current partners</p>
+            </div>
+
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <p>Analyzing industry and potential partners...</p>
+            </div>
+
+            <div class="results-container" id="results-container">
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="companies">Companies</button>
+                    <button class="tab-button" data-tab="analysis">Industry Analysis</button>
+                    <button class="tab-button" data-tab="sources">Sources</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div class="tab-pane active" id="companies">
+                        <div class="industry-header" id="industry-header">
+                            <!-- Industry header will be inserted here -->
+                        </div>
+                        <div class="companies-grid" id="companies-grid">
+                            <!-- Company cards will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="analysis">
+                        <div class="analysis-content" id="analysis-content">
+                            <!-- Analysis content will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="sources">
+                        <div class="sources-content" id="sources-content">
+                            <!-- Sources content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Company detail modal -->
+            <div class="modal" id="company-modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div class="modal-body" id="modal-body">
+                        <!-- Company detail will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 MLSE Partner Research - Partnership Intelligence Platform</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

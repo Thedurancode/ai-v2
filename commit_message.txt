@@ -1,0 +1,12 @@
+Add Top Partners screen to view highest-scored partnership opportunities
+
+This commit adds a new Top Partners screen to the React application with the following features:
+- New TopPartnersPage component with a responsive grid layout
+- API service function to fetch top partners from the backend
+- Updated App.jsx with routing for the new page
+- Enhanced Header with navigation links to the Top Partners page
+- Visual score indicators for partnership potential
+- Dropdown selector to change the number of displayed partners
+- Proper handling of loading and empty states
+
+The page makes it easy to quickly view and assess the highest-scoring partnership opportunities in a visually appealing format. 
