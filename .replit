@@ -1,63 +1,31 @@
-run = "python app.py"
+run = "bash run.sh"
 language = "python3"
 modules = ["python-3.11"]
 
 [[ports]]
-localPort = 5018
+localPort = 5020
 externalPort = 80
 
 [deployment]
 deploymentTarget = "cloudrun"
-run = ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:5018 --timeout 120"]
+run = ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:5020 --timeout 120"]
 
-[workflows]
-runButton = "Run"
+[env]
+PYTHONPATH = "/home/runner/${REPL_SLUG}"
+FLASK_APP = "app.py"
+FLASK_ENV = "development"
+FLASK_DEBUG = "1"
+PORT = "5020"
 
-[[workflows.workflow]]
-name = "Run"
-author = 27576597
-mode = "sequential"
+[nix]
+channel = "stable-22_11"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "# Install backend dependencies"
+[packager]
+language = "nodejs"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "pip install -r requirements.txt"
+[packager.features]
+packageSearch = true
+guessImports = true
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = ""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "# Install frontend dependencies and build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd dura-react"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd .."
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = ""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "# Run Flask app"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python app.py"
+[unitTest]
+language = "nodejs"
