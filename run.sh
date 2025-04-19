@@ -3,9 +3,24 @@ set -e
 
 echo "Starting MLSE AI Search application setup..."
 
+# Print Python version information
+echo "Python version:"
+python --version
+
+# Check for Python environment issues
+echo "Checking Python environment..."
+python -c "import sys; print(f'Python executable: {sys.executable}'); print(f'Python path: {sys.path}')"
+
 # Install Python dependencies
 echo "Installing Python dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
+
+# Create a static directory if it doesn't exist
+if [ ! -d "dura-react/dist" ]; then
+  echo "Creating static directory..."
+  mkdir -p dura-react/dist
+fi
 
 # Navigate to React app directory
 cd dura-react
